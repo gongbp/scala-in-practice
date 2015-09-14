@@ -3,7 +3,8 @@
 
 # intellij
 *.iml
-.idea
+.idea/
+.idea/libraries
 
 # sbt specific
 .cache
