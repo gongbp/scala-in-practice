@@ -17,7 +17,7 @@ Scala中最简单的类，形式上和Java的很相似。如果是使用Scala St
 class Counter {
   private var value = 0          // 字段必须初始化
   def increment() { value += 1 } // 方法默认为public, 修改器使用括号（），Use () with mutator
-  def current = value            //读取器不使用括号（），Don’t use () with accessor
+  def current = value            // 读取器不使用括号（），Don’t use () with accessor
   /**
    * 首先对两个术语进行说明：
    *
@@ -77,7 +77,6 @@ public class Person { // java推荐写法，带getter和setter的属性age
   public int getAge() {return age;}
   public void setAge(int age) {this.age = age;}
 }
-
 ```
 >注意称呼的改变，第一个类中age是字段，第二个类中age是属性。
 带有getter和setter的字段就是属性。
