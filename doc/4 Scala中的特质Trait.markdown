@@ -17,7 +17,7 @@
 
 ## 4.1 为什么没有多重继承，Scala通过特质如何解决多重继承问题
 
-多重继承会引发菱形继承问题，既，两个父类继承自同一个基类，则子类中会包含两份父类中的内容，不合并重复内容会引起一些歧义，而合并重复内容又会导致类成员的内存布局不能简单复制地从父类复制。
+多重继承会引发菱形继承问题，既，两个父类继承自同一个基类，则子类中会包含两份父类中的内容，不合并重复内容会引起一些歧义，而合并重复内容又会导致类成员的内存布局不能简单的从父类复制。
 
 Scala中，在构造特质时，对其构造顺序进行限制来消除多重继承的问题。具体见下面篇幅的介绍。
 
@@ -191,9 +191,6 @@ trait ShortLogger extends Logged {
 
 object Run extends App {
 
-  // 线性化顺序也就是super被解析的顺序
-  // SavingAccount -> TimestampLogger -> ShortLogger -> ConsoleLogger -> Logger -> Account
-  
   /**
    * acct1对象在调用log方法时，首先会调用ShortLogger中的log方法，
    * ShortLogger中的log方法对日志进行处理后，把处理后的结果信息
@@ -207,6 +204,9 @@ object Run extends App {
   val acct1 = new SavingsAccount with ConsoleLogger with TimestampLogger with ShortLogger
   acct1.log("test") // Sun Dec 01 16:01:17 CST 2013 test
 
+  // 线性化顺序也就是super被解析的顺序
+  // SavingAccount -> TimestampLogger -> ShortLogger -> ConsoleLogger -> Logger -> Account
+ 
   val acct2 = new SavingsAccount with ConsoleLogger with ShortLogger with TimestampLogger
   acct2.log("test") // Sun Dec 01 1...
 }
