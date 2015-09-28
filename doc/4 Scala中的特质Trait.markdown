@@ -206,7 +206,6 @@ object Run extends App {
 
   // 线性化顺序也就是super被解析的顺序
   // SavingAccount -> TimestampLogger -> ShortLogger -> ConsoleLogger -> Logger -> Account
- 
   val acct2 = new SavingsAccount with ConsoleLogger with ShortLogger with TimestampLogger
   acct2.log("test") // Sun Dec 01 1...
 }
@@ -441,6 +440,7 @@ SavingsAccount类按照正常的方式继承了这个字段。SavingsAccount对�
 在JVM中，一个类只能扩展一个父类，因此来自特质的字段不能以相同的方式继承。由于这个限制，maxLength被直接加到了SavingsAccount类中，跟interest字段并排在一起。
 
 >从特质中通过混入的方式获得的具体字段都自动成为该类自己的字段，这种字段等同于在类中自己定义的普通字段。
+如果特质ShortLogger中的字段和父类Account中的字段有重复的话，编译出错，字段冲突。
 
 ---
 
@@ -691,3 +691,4 @@ public class ConsoleLogger$class { // 生成Java伴生类
 References:
 
 [1]. 【Scala for the impatient chapter 10】
+[2].http://www.slideshare.net/jboner/pragmatic-real-world-scala-45-min-presentation
