@@ -158,7 +158,7 @@ class Person {
 }
 
 ```
-
+更具体的分析请看下面的内容。
 
 ## 1.2 简单类和无参方法
 
@@ -210,7 +210,7 @@ class Counter {
 
 ---
 
-## 1.2 带getter和setter的属性
+## 1.3 带getter和setter的属性
 
 - java中的例子：
 
@@ -317,7 +317,7 @@ Scala对每个字段都提供getter和setter，但是你也可以通过下面的
 
 ---
 
-## 1.3 只有getter的Scala字段（等同于Java中的属性）
+## 1.4 只有getter的Scala字段（等同于Java中的属性）
 
 对Scala类中只提供只读字段，也就是只有getter方法而没有setter方法。
 该字段在对象构建完成之后就不再改变，则使用val定义。
@@ -348,7 +348,7 @@ Scala编译后生成一个private的final字段和一个getter方法，没有set
 ---
 
 
-## 1.4 关于对象私有字段:
+## 1.5 关于对象私有字段:
 
 在Java中的例子：
 ```
@@ -400,7 +400,7 @@ class Counter {
 
 ---
 
-## 1.5 Bean属性
+## 1.6 Bean属性
 这是Java Style的写法，不推荐使用，略过！
 
 ```
@@ -420,7 +420,7 @@ setName(newValue:String):Unit
 
 ---
 
-## 1.6 辅助构造器
+## 1.7 辅助构造器
 
 Scala的类可以有任意多个构造器，但是最重要的就是它的主构造器。
 
@@ -484,7 +484,7 @@ val r4 = new Random(100)    // 第三个辅助构造器
 
 ---
 
-## 1.7 主构造器
+## 1.8 主构造器
 
 在Scala中，每个类都有主构造器。主构造器并不以this方法定义，而是与类定义交织在一起。
 
@@ -634,7 +634,7 @@ object PrivateConstructorTests extends App {
 
 ---
 
-## 1.8 样本类Case Class
+## 1.9 样本类Case Class
 
 上面介绍了Scala中关于类的各种细节，不难发现，很多都跟Java的类似。
 如果真按照上面的搞法，归根结底，还是Java Style。Scala不是很推崇Java Style。
