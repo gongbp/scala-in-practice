@@ -8,9 +8,161 @@
 
 ------------------------------------------------------------
 
-## 1.1 简单类和无参方法
+本篇主要介绍Scala中的类，及类的构造器，类中的字段/属性，类中的方法/函数，类的继承和类的具体使用场景。
+首先通过例子驱动的方式，介绍类的各种特性及使用时需要注意的“陷阱”。
 
-Scala中最简单的类，形式上和Java的很相似。如果是使用Scala Style的话，不会这样来使用一个类。
+## 1.1 如何创建一个类
+在Scala中通过class关键字来定义一个类。
+```
+class Person {}
+
+object PersonTest extends App {
+  val person = new Person
+}
+```
+然后通过new的方式实例化一个Person的对象。
+
+
+----------
+
+
+一个类必须有字段、方法，才能有其实用价值。下面就为该Person类增加字段。
+```
+class Person {
+  val name = "jack" // scala中默认是public
+}
+```
+val意味着定义的字段是不可变的，上面的类被编译后，会生成一个final字段，并且会提供一个public的getter方法。具体如下：
+```
+$ scalac Person.scala  
+
+$ javap -private Person
+Compiled from "Person.scala"
+public class Person {
+  private final java.lang.String name; // final的不可变字段
+  public java.lang.String name();      // 一个public的getter方法
+  public Person();
+} 
+```
+
+----------
+
+
+如果为该字段增加private修饰后，则唯一的getter方法就会变为private。
+```
+class Person {
+  private val name = "jack" 
+}
+
+$ scalac Person.scala 
+
+$ javap -private Person
+Compiled from "Person.scala"
+public class Person {
+  private final java.lang.String name;
+  private java.lang.String name();  // 一个private的getter方法 
+  public Person();
+} 
+
+```
+
+
+----------
+
+为Person增加一个可变字段。
+```
+class Person {
+  var age = 0; // 定义一个public的可变字段
+}       
+```
+该类经过编译后，会生成一个私有的age字段，并提供public的getter/setter方法。
+```
+$ scalac Person.scala 
+
+$ javap -private Person
+Compiled from "Person.scala"
+public class Person {
+  private int age;            // 字段变为private
+  public int age();           // 一个public的getter
+  public void age_$eq(int);   // 一个public的setter
+  public Person();
+}  
+
+```
+
+
+----------
+
+
+但是如果该类的字段也用private修饰后，则getter/setter方法也会变为私有的。如下：
+```
+class Person {
+ private var age = 0; // 定义一个private的字段
+} 
+
+$ scalac Person.scala 
+
+$ javap -private Person
+Compiled from "Person.scala"
+public class Person {
+  private int age;           // 私有字段
+  private int age();         // 私有的getter
+  private void age_$eq(int); // 私有的setter
+  public Person();
+} 
+
+```
+
+
+----------
+
+
+Scala中，其访问修饰符可以更小粒度的来进行访问作用域的控制。
+比如：private[this]，private[包名称]。后者很容易理解，就是在指定的包及其子包内都可访问。
+那么，private[this]呢？它和单独的private修饰到底有什么区别，请看具体代码：
+```
+class Person {
+ private[this] var age = 0; // 定义一个private[this]的字段
+} 
+
+$ scalac Person.scala 
+
+$ javap -private Person
+Compiled from "Person.scala"
+public class Person {
+  private int age;  // 只有private的字段
+  public Person();
+} 
+
+```
+通过编译后的代码我们发现，如果是private[this]修饰的字段，是压根就不会产生getter/setter方法的。
+下面的例子是private和private[this]在具体使用场景中的主要区别：
+```
+class Person {
+  val name = "jack"
+  private var age = 0
+  private[this] var nationality = "china"
+  
+  /**
+   * 在本Person类中接收一个Person类型的参数,并访问该参数对象的字段时,
+   * 就充分体现了private和private[this]的主要区别
+   * @param p 一个Person类型的参数
+   */
+  def invite(p: Person) = {
+    // private修饰时,在这种情况下是可以访问的
+    val sumAge = age + p.age 
+    
+    // 而用private[this]修饰时,在此种情况下会编译报错: Symbol nationality is inaccessible from this place
+    val nationalities = s"$nationality + ${p.nationality}"
+  }
+}
+
+```
+
+
+## 1.2 简单类和无参方法
+
+Scala中最简单的类，形式上和Java的很相似。
 
 ```
 // 不推荐在Scala中这样使用一个类，这是Java Style
