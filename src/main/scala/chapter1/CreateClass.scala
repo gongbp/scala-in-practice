@@ -18,7 +18,7 @@ class Person {
     val sumAge = age + p.age
 
     // 而用private[this]修饰时,在此种情况下会编译报错: Symbol nationality is inaccessible from this place
-    val nationalities = s"$nationality + ${p.nationality}"
+//    val nationalities = s"$nationality + ${p.nationality}"
   }
 }
 

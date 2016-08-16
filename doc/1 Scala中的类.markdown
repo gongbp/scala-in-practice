@@ -400,7 +400,40 @@ class Counter {
 
 ---
 
-## 1.6 Bean属性
+## 1.6 带有参数的类
+Scala中的类是可以带有参数的，需要注意的是，这些参数跟类的主构造器的参数是交织在一起的。也就是类的参数列表跟主构造器的参数列表是一模一样的。引用一个Programming in scala这本书里面的例子：
+```
+// 带有两个参数的类
+class Rational(n: Int, d: Int) {
+  require(d != 0)
+  override def toString = s"$n / $d"
+  
+  // 类参数并非是类的字段，所以下面的方法在that.d和that.n的地方会
+  // 编译出错：Rational.scala:4: error: value d is not a member of Rational
+  def add(that: Rational): Rational = new Rational(n * that.d + that.n * d, d * that.d)
+}
+```
+
+如果为了在定义类参数的时候就自动为该类生成字段的话，很简单，只需要这么来一下即可（注意类参数的修饰符）：
+```
+class Rational(val n: Int, val d: Int) {
+  require(d != 0)
+  override def toString = s"$n / $d"
+  
+  // 此时，编译通过
+  def add(that: Rational): Rational = new Rational(n * that.d + that.n * d, d * that.d)
+}
+
+```
+通过val和var修饰的类参数，会自动为该类生成字段。
+
+
+----------
+
+----------
+
+
+## 1.7 Bean属性
 这是Java Style的写法，不推荐使用，略过！
 
 ```
@@ -420,7 +453,7 @@ setName(newValue:String):Unit
 
 ---
 
-## 1.7 辅助构造器
+## 1.8 辅助构造器
 
 Scala的类可以有任意多个构造器，但是最重要的就是它的主构造器。
 
@@ -484,7 +517,7 @@ val r4 = new Random(100)    // 第三个辅助构造器
 
 ---
 
-## 1.8 主构造器
+## 1.9 主构造器
 
 在Scala中，每个类都有主构造器。主构造器并不以this方法定义，而是与类定义交织在一起。
 
@@ -634,7 +667,7 @@ object PrivateConstructorTests extends App {
 
 ---
 
-## 1.9 样本类Case Class
+## 1.10 样本类Case Class
 
 上面介绍了Scala中关于类的各种细节，不难发现，很多都跟Java的类似。
 如果真按照上面的搞法，归根结底，还是Java Style。Scala不是很推崇Java Style。

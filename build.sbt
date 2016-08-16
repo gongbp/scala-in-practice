@@ -38,3 +38,5 @@ libraryDependencies += "com.typesafe.akka" %% "akka-stream-experimental" % "0.4"
 libraryDependencies += "com.storm-enroute" %% "reactive-collections" % "0.5"
 
 libraryDependencies += "joda-time" % "joda-time" % "2.7"
+
+libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.4" % "test"
