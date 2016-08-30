@@ -41,7 +41,7 @@ trait FutureInAction {
    * @return Future[Seq[RandomNumber]]
    */
   def apiSimulator(size: Int): Future[Seq[RandomNumber]] = Future {
-    println(s"-- This is the api simulator method, parameter's value: size = $size --")
+    println(s"-- This is the api simulator method, parameter's value: size = $size, The thread name is ${Thread.currentThread().getName} --")
     Thread.sleep(2000) // this method need to 1 minute to calculate
     Seq.fill(size)(Random.nextInt(100)).map(RandomNumber(_))
   }
@@ -56,38 +56,58 @@ object TheMostCommonUseCase extends FutureInAction {
 
   /**
    * Blocking Style
+   *
+   * 阻塞方式: 平均速度中等
+   * 顺序执行:
+   *  ①
+   *  ②
+   *  ③
+   *
    * @return
    */
   def sumRandomNumbersByTowCallsInBlockingStyle: Long = {
-    val firstCall: Seq[RandomNumber] = Await.result(apiSimulator(50), 10 seconds)
-    val secondCall: Seq[RandomNumber] = Await.result(apiSimulator(100), 20 seconds)
-    firstCall.map(_.number).sum + secondCall.map(_.number).sum
+    val firstCall: Seq[RandomNumber] = Await.result(apiSimulator(50), 10 seconds)    // ①
+    val secondCall: Seq[RandomNumber] = Await.result(apiSimulator(100), 20 seconds)  // ②
+    firstCall.map(_.number).sum + secondCall.map(_.number).sum                       // ③
   }
 
   /**
    * Blocking Style 2
+   *
+   * 非阻塞方式: 平均速度最慢
+   * 并发执行
    * @return
    */
   def sumRandomNumbersByTowCallsInBlockingStyle2: Long = {
-    val sum: Future[Long] = for {
-      firstCall <- apiSimulator(50)
-      secondCall <- apiSimulator(100)
-    } yield firstCall.map(_.number).sum + secondCall.map(_.number).sum
 
+    // 1
+    val sum: Future[Long] = for {
+      firstCall <- apiSimulator(50)                                      // ①
+      secondCall <- apiSimulator(100)                                    // ②
+    } yield firstCall.map(_.number).sum + secondCall.map(_.number).sum   // ③
+
+    // 2
     Await.result(sum, 20 seconds)
   }
 
   /**
    * Blocking Style 3 [recommend]
-   * 阻塞情况下, 推荐使用方式
+   * 阻塞情况下, 推荐使用方式, 平均速度最快
    * ブロッキングの場合、オススメです。
+   *
+   * 非阻塞方式: 平均速度最快
+   * 并发执行
    *
    * @return
    */
   def sumRandomNumbersByTowCallsInBlockingStyle3: Long = {
+    // 1
     val sum = async {
+      // ①                                        // ②
       await(apiSimulator(50)).map(_.number).sum + await(apiSimulator(100)).map(_.number).sum
     }
+
+    // 2
     Await.result(sum, 10 seconds)
   }
 
@@ -95,12 +115,14 @@ object TheMostCommonUseCase extends FutureInAction {
 
   /**
    * Non-Blocking Style: faster
+   * 并行执行
    * @return
    */
   def sumRandomNumbersByTowCallsInNonBlockingStyle: Long = {
-    val firstCall: Future[Seq[RandomNumber]] = apiSimulator(50)
-    val secondCall: Future[Seq[RandomNumber]] = apiSimulator(100)
+    val firstCall: Future[Seq[RandomNumber]] = apiSimulator(50)       // 1
+    val secondCall: Future[Seq[RandomNumber]] = apiSimulator(100)     // 1
 
+    // 2
     Await.result(firstCall, 10 seconds).map(_.number).sum +
       Await.result(secondCall, 20 seconds).map(_.number).sum
   }
